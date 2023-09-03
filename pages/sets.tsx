@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import SetPreview from "../components/sets/setPreview";
+import SetPlaceHolder from "../components/sets/setPlaceholder";
+import SetsPlaceholder from "../components/sets/setsPlaceholder";
 
 const Sets = () => {
   const [sets, setSets] = useState([]);
@@ -46,11 +48,15 @@ const Sets = () => {
         className="bg-gray-700 text-white rounded-lg px-2 py-2 w-1/4"
       />
 
-      <div className="grid grid-cols-3 gap-x-2 gap-y-2">
-        {displayedSets.map((set) => (
-          <SetPreview set={set} />
-        ))}
-      </div>
+      {sets.length !== 0 ? (
+        <div className="grid grid-cols-3 gap-x-2 gap-y-2">
+          {displayedSets.map((set) => (
+            <SetPreview set={set} />
+          ))}
+        </div>
+      ) : (
+        <SetsPlaceholder />
+      )}
     </div>
   );
 };
