@@ -17,7 +17,10 @@ const CardsList = ({ cards }: CardsListProps) => {
         {cards
           .filter(
             (card) =>
-              card.name.toLocaleLowerCase().includes(searchValue) ||
+              card.name
+                .toLocaleLowerCase()
+                .includes(searchValue.toLowerCase()) ||
+              card.id.includes(searchValue) ||
               searchValue === ""
           )
           .map((card) => (
