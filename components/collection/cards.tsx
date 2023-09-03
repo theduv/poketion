@@ -16,7 +16,7 @@ const getTotalPrice = (
 
   cards.forEach((card) => {
     const parsedDetails = JSON.parse(card.details);
-    res += parsedDetails.cardmarket.prices.averageSellPrice;
+    res += parsedDetails.cardmarket.prices.averageSellPrice * card.default;
   });
 
   return res;
