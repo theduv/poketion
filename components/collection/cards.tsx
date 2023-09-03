@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Card from "../../interfaces/card";
 
 interface CardsProps {
@@ -8,11 +9,29 @@ interface CardsProps {
   }>;
 }
 
+const getTotalPrice = (
+  cards: Array<{ id: string; default: number; details: string }>
+) => {
+  let res = 0;
+
+  cards.forEach((card) => {
+    const parsedDetails = JSON.parse(card.details);
+    res += parsedDetails.cardmarket.prices.averageSellPrice;
+  });
+
+  return res;
+};
+
 const Cards = ({ cards }: CardsProps) => {
-  let totalPrice = 0;
+  const totalPrice = getTotalPrice(cards);
+
+  const onClickSaveChanges = () => {};
 
   return (
-    <div className="mx-auto">
+    <div className="mx-auto flex flex-col items-center justify-center space-y-4">
+      <div className="w-full text-center italic">
+        Collection estimated value: ${Math.round(totalPrice)}
+      </div>
       <table className="mx-auto">
         <thead className="table-auto">
           <tr>
@@ -24,12 +43,11 @@ const Cards = ({ cards }: CardsProps) => {
           </tr>
         </thead>
         <tbody className="table-auto">
-          {cards.map((card) => {
+          {cards.map((card, index) => {
             const cardInfos: Card = JSON.parse(card.details);
-            totalPrice += cardInfos.cardmarket.prices.avg30;
 
             return (
-              <tr>
+              <tr key={index}>
                 <td className="border px-4 py-2">{cardInfos.name}</td>
                 <td className="border px-4 py-2">
                   {cardInfos.number} / {cardInfos.set.total}
@@ -39,12 +57,23 @@ const Cards = ({ cards }: CardsProps) => {
                   {cardInfos.cardmarket.prices.avg30}
                 </td>
                 <td className="border px-4 py-2">{card.default}</td>
+                <td className=" px-4 py-2 font-bold cursor-pointer text-center">
+                  -
+                </td>
+                <td className=" px-4 py-2 font-bold cursor-pointer text-center">
+                  +
+                </td>
               </tr>
             );
           })}
         </tbody>
       </table>
-      <div>{Math.round(totalPrice)}</div>
+      <button
+        className="rounded-lg bg-orange-600 text-white font-bold px-4 py-2"
+        onClick={onClickSaveChanges}
+      >
+        Save changes
+      </button>
     </div>
   );
 };
