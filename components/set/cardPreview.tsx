@@ -10,19 +10,24 @@ interface CardPreviewProps {
 }
 
 const CardPreview = ({ card }: CardPreviewProps) => {
-  const [quantity, setQuantity] = useState<number>(1);
+  const [quantityRegular, setQuantityRegular] = useState<number>(1);
+  const [quantityReverse, setQuantityReverse] = useState<number>(1);
   const { userData } = useAuth();
 
-  const onChangeQuantity = (e: any) => {
-    setQuantity(e.target.value);
+  const onChangeQuantityRegular = (e: any) => {
+    setQuantityRegular(e.target.value);
+  };
+  const onChangeQuantityReverse = (e: any) => {
+    setQuantityReverse(e.target.value);
   };
 
-  const onClickAdd = async () => {
+  const onClickAddRegular = async () => {
     try {
       setDoc(
         doc(firestore, "users", userData.uid, "collection", card.id),
         {
-          default: increment(quantity),
+          type: "regular",
+          quantity: increment(quantityRegular),
           id: card.id,
           details: JSON.stringify(card),
         },
@@ -31,7 +36,24 @@ const CardPreview = ({ card }: CardPreviewProps) => {
     } catch (e) {
       console.log(e);
     }
-    setQuantity(1);
+    setQuantityRegular(1);
+  };
+  const onClickAddReverse = async () => {
+    try {
+      setDoc(
+        doc(firestore, "users", userData.uid, "collection", card.id),
+        {
+          type: "reverse",
+          quantity: increment(quantityReverse),
+          id: card.id,
+          details: JSON.stringify(card),
+        },
+        { merge: true }
+      );
+    } catch (e) {
+      console.log(e);
+    }
+    setQuantityReverse(1);
   };
 
   return (
@@ -41,18 +63,35 @@ const CardPreview = ({ card }: CardPreviewProps) => {
       </h1>
       <div className="p-8 flex flex-col items-center space-y-4">
         <Image src={card.images.large} alt={card.id} width={200} height={120} />
-        <div className="flex items-center space-x-3">
-          <input
-            value={quantity}
-            onChange={onChangeQuantity}
-            className="bg-gray-300 w-10 h-10 rounded-lg text-center"
-          />
-          <button
-            onClick={onClickAdd}
-            className="text-poke-white w-10 h-10 text-2xl bg-poke-light-green rounded-md"
-          >
-            +
-          </button>
+        <div className="flex space-x-4">
+          <div className="flex items-center space-x-3">
+            <h3 className="text-gray-300">Regular</h3>
+            <input
+              value={quantityRegular}
+              onChange={onChangeQuantityRegular}
+              className="bg-gray-300 w-10 h-10 rounded-lg text-center"
+            />
+            <button
+              onClick={onClickAddRegular}
+              className="text-poke-white w-10 h-10 text-2xl bg-poke-light-green rounded-md"
+            >
+              +
+            </button>
+          </div>
+          <div className="flex items-center space-x-3">
+            <h3 className="text-gray-300">Reverse</h3>
+            <input
+              value={quantityReverse}
+              onChange={onChangeQuantityReverse}
+              className="bg-gray-300 w-10 h-10 rounded-lg text-center"
+            />
+            <button
+              onClick={onClickAddReverse}
+              className="text-poke-white w-10 h-10 text-2xl bg-poke-light-green rounded-md"
+            >
+              +
+            </button>
+          </div>
         </div>
       </div>
     </div>

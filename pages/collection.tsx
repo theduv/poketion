@@ -28,7 +28,7 @@ const Collection = () => {
   }, []);
 
   return (
-    <div>
+    <div className="overflow-y-scroll">
       <Cards cards={cards} />
     </div>
   );

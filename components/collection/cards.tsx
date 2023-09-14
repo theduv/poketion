@@ -4,19 +4,36 @@ import Card from "../../interfaces/card";
 interface CardsProps {
   cards: Array<{
     id: string;
-    default: number;
+    type: string;
+    quantity: number;
     details: string;
   }>;
 }
 
 const getTotalPrice = (
-  cards: Array<{ id: string; default: number; details: string }>
+  cards: Array<{
+    id: string;
+    type: string;
+    quantity: number;
+    details: string;
+  }>
 ) => {
   let res = 0;
 
   cards.forEach((card) => {
     const parsedDetails = JSON.parse(card.details);
-    res += parsedDetails.cardmarket.prices.averageSellPrice * card.default;
+    if (
+      parsedDetails.cardmarket === undefined ||
+      parsedDetails.cardmarket.prices === undefined
+    ) {
+      return;
+    }
+
+    if (card.type === "regular") {
+      res += parsedDetails.cardmarket?.prices?.averageSellPrice * card.quantity;
+    } else {
+      res += parsedDetails.cardmarket?.prices?.reverseHoloAvg30 * card.quantity;
+    }
   });
 
   return res;
@@ -32,7 +49,7 @@ const Cards = ({ cards }: CardsProps) => {
       <div className="w-full text-center italic">
         Collection estimated value: ${Math.round(totalPrice)}
       </div>
-      <table className="mx-auto">
+      <table className="mx-auto overflow-y-scroll">
         <thead className="table-auto">
           <tr>
             <th className="px-4 py-2">Name</th>
@@ -40,6 +57,7 @@ const Cards = ({ cards }: CardsProps) => {
             <th className="px-4 py-2">Set name</th>
             <th className="px-4 py-2">Price</th>
             <th className="px-4 py-2">Amount</th>
+            <th className="px-4 py-2">Type</th>
           </tr>
         </thead>
         <tbody className="table-auto">
@@ -54,9 +72,14 @@ const Cards = ({ cards }: CardsProps) => {
                 </td>
                 <td className="border px-4 py-2"> {cardInfos.set.name}</td>
                 <td className="border px-4 py-2">
-                  {cardInfos.cardmarket.prices.avg30}
+                  {card.type === "regular"
+                    ? cardInfos.cardmarket?.prices?.avg30
+                    : cardInfos.cardmarket?.prices?.reverseHoloAvg30}
                 </td>
-                <td className="border px-4 py-2">{card.default}</td>
+                <td className="border px-4 py-2 text-center">
+                  {card.quantity}
+                </td>
+                <td className="border px-4 py-2 text-center">{card.type}</td>
                 <td className=" px-4 py-2 font-bold cursor-pointer text-center">
                   -
                 </td>
